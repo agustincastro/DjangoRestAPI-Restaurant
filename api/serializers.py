@@ -34,16 +34,18 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
 
+        ingredients_data = validated_data.pop("ingredients")
+
         restaurant = models.Restaurant.objects.get(pk=validated_data["restaurant_id"])
         validated_data["restaurant"] = restaurant
         recipe = models.Recipe.objects.create(**validated_data)
 
-        if "ingredients" in validated_data:
-            # Assign ingredients if they are present in the body
-            ingredient_validated_data = validated_data.pop("ingredients")
-            for ingredient in ingredient_validated_data:
-                ingredient.recipe = recipe
-            IngredientSerializer.create(validated_data=ingredient_validated_data)
+        # Assign ingredients if they are present in the body
+        if ingredients_data:
+            for ingredient_dict in ingredients_data:
+                ingredient = models.Ingredient(name=ingredient_dict["name"])
+                ingredient.save()
+                ingredient.recipe.add(recipe)
         return recipe
 
     class Meta:
