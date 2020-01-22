@@ -5,7 +5,7 @@ import uuid
 class Restaurant(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=120, unique=True, verbose_name="Name")
-    direction = models.CharField(max_length=120, unique=True, verbose_name="Direction")
+    direction = models.CharField(max_length=120, verbose_name="Direction")
     phone = models.IntegerField()
 
     def __str__(self):

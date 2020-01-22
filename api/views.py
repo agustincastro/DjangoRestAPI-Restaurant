@@ -49,7 +49,7 @@ class Recipes(APIView):
 
     def post(self, request, restaurant_id):
         try:
-            restaurant = Restaurant.objects.get(pk=restaurant_id)
+            Restaurant.objects.get(pk=restaurant_id)
         except Restaurant.DoesNotExist:
             raise Http404
 
@@ -62,17 +62,17 @@ class Recipes(APIView):
 
 class RecipeDetail(APIView):
 
-    def get(self, request, recipe_id):
+    def get(self, request, restaurant_id, recipe_id):
         try:
-            recipe = Recipe.objects.get(pk=recipe_id)
+            recipe = Recipe.objects.get(restaurant__id=restaurant_id, pk=recipe_id)
         except Recipe.DoesNotExist:
             raise Http404
         serializer = serializers.RecipeSerializer(recipe)
         return Response(serializer.data)
 
-    def delete(self, request, recipe_id):
+    def delete(self, request, restaurant_id, recipe_id):
         try:
-            recipe = Recipe.objects.get(pk=recipe_id)
+            recipe = Recipe.objects.get(restaurant__id=restaurant_id, pk=recipe_id)
         except Recipe.DoesNotExist:
             raise Http404
         recipe.delete()
