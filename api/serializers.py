@@ -6,6 +6,8 @@ import os
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
+    # Serializer for the Restaurant model, in fields we specify the model attributes we want to
+    # deserialize and serialize
     class Meta:
         model = models.Restaurant
         fields = ['id', 'name', 'direction', 'phone']
@@ -18,7 +20,11 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    # As each recipe has an image thumbnail we deal with the serialization of the image in the function
+    # 'encode_thumbnail' were the image is read from the media folder and encoded into base64
     thumbnail = serializers.SerializerMethodField('encode_thumbnail')
+    # When getting a recipe I want an 'ingredients' field, the value of this field is the return of the get_ingredients
+    # function that serializes the ingredients for the recipe.
     ingredients = serializers.SerializerMethodField('get_ingredients')
 
     def encode_thumbnail(self, recipe):
@@ -33,7 +39,10 @@ class RecipeSerializer(serializers.ModelSerializer):
             return None
 
     def create(self, validated_data):
-
+        """
+        Create function for recipes, a restaurant and a list of ingredients is asociated. The restaurantId
+        is taken from the corresponding path parameter and the ingredients can be added optionally in the post body.
+        """
         ingredients_data = validated_data.pop("ingredients")
 
         restaurant = models.Restaurant.objects.get(pk=validated_data["restaurant_id"])
